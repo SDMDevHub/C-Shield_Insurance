@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Assicurazione</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            display: none;
+        }
+
+        .container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            min-width: 500px;
+            max-width: 700px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .vehicle-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .vehicle-info h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .vehicle-detail {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .insurance-status {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .status-expired {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .status-inactive {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .insurance-types {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .insurance-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .insurance-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .insurance-card.selected {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .card-price {
+            font-size: 18px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .card-features li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #ddd;
+        }
+
+        .card-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .duration-selector {
+            margin: 20px 0;
+        }
+
+        .duration-selector label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .duration-option {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .duration-option:hover {
+            border-color: #ffd700;
+        }
+
+        .duration-option.selected {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(244, 67, 54, 0.8);
+            transform: rotate(90deg);
+        }
+
+        .total-cost {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .claims-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .claims-used {
+            color: #FF9800;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .container {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body id="insuranceMenu">
+    <div class="container">
+        <button class="close-btn" onclick="closeMenu()">×</button>
+        
+        <div class="header">
+            <h1>🚗 Sistema Assicurazione</h1>
+            <p>Proteggi il tuo veicolo con la nostra assicurazione</p>
+        </div>
+
+        <div class="vehicle-info">
+            <h3>📋 Informazioni Veicolo</h3>
+            <div class="vehicle-detail">
+                <span>Targa:</span>
+                <span id="vehiclePlate">-</span>
+            </div>
+            <div class="vehicle-detail">
+                <span>Modello:</span>
+                <span id="vehicleModel">-</span>
+            </div>
+        </div>
+
+        <div id="insuranceStatus" class="insurance-status status-inactive">
+            ❌ Nessuna Assicurazione Attiva
+        </div>
+
+        <div id="claimsInfo" class="claims-info hidden">
+            <div class="vehicle-detail">
+                <span>Sinistri utilizzati:</span>
+                <span id="claimsUsed" class="claims-used">0/0</span>
+            </div>
+            <div class="vehicle-detail">
+                <span>Scadenza:</span>
+                <span id="expiryDate">-</span>
+            </div>
+        </div>
+
+        <div id="buySection">
+            <div class="insurance-types">
+                <div class="insurance-card" data-type="basic" onclick="selectInsurance('basic')">
+                    <div class="card-header">
+                        <div class="card-title">🥉 Assicurazione Base</div>
+                        <div class="card-price">$50/giorno</div>
+                    </div>
+                    <ul class="card-features">
+                        <li>Copertura danni: 50%</li>
+                        <li>Massimo 2 sinistri</li>
+                        <li>Riparazione base</li>
+                    </ul>
+                </div>
+
+                <div class="insurance-card" data-type="premium" onclick="selectInsurance('premium')">
+                    <div class="card-header">
+                        <div class="card-title">🥈 Assicurazione Premium</div>
+                        <div class="card-price">$100/giorno</div>
+                    </div>
+                    <ul class="card-features">
+                        <li>Copertura danni: 80%</li>
+                        <li>Massimo 5 sinistri</li>
+                        <li>Riparazione avanzata</li>
+                        <li>Supporto prioritario</li>
+                    </ul>
+                </div>
+
+                <div class="insurance-card" data-type="full" onclick="selectInsurance('full')">
+                    <div class="card-header">
+                        <div class="card-title">🥇 Assicurazione Completa</div>
+                        <div class="card-price">$150/giorno</div>
+                    </div>
+                    <ul class="card-features">
+                        <li>Copertura danni: 100%</li>
+                        <li>Sinistri illimitati</li>
+                        <li>Riparazione completa</li>
+                        <li>Supporto 24/7</li>
+                        <li>Protezione furto</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="duration-selector">
+                <label>Durata Assicurazione:</label>
+                <div class="duration-options">
+                    <div class="duration-option" data-days="1" onclick="selectDuration(1)">1 Giorno</div>
+                    <div class="duration-option" data-days="7" onclick="selectDuration(7)">1 Settimana</div>
+                    <div class="duration-option selected" data-days="30" onclick="selectDuration(30)">1 Mese</div>
+                    <div class="duration-option" data-days="90" onclick="selectDuration(90)">3 Mesi</div>
+                </div>
+            </div>
+
+            <div id="totalCost" class="total-cost hidden">
+                Costo Totale: $0
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button id="buyBtn" class="btn btn-primary hidden" onclick="buyInsurance()">
+                💳 Acquista Assicurazione
+            </button>
+            <button id="renewBtn" class="btn btn-secondary hidden" onclick="renewInsurance()">
+                🔄 Rinnova Assicurazione
+            </button>
+            <button id="claimBtn" class="btn btn-warning hidden" onclick="claimInsurance()">
+                🔧 Richiedi Sinistro
+            </button>
+            <button class="btn btn-danger" onclick="closeMenu()">
+                ❌ Chiudi
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentVehicleData = null;
+        let currentInsuranceData = null;
+        let selectedInsuranceType = null;
+        let selectedDuration = 30;
+
+        const insuranceTypes = {
+            basic: {
+                name: "Assicurazione Base",
+                price: 50,
+                coverage: 50,
+                maxClaims: 2
+            },
+            premium: {
+                name: "Assicurazione Premium", 
+                price: 100,
+                coverage: 80,
+                maxClaims: 5
+            },
+            full: {
+                name: "Assicurazione Completa",
+                price: 150,
+                coverage: 100,
+                maxClaims: 999
+            }
+        };
+
+        // Event listeners per messaggi da FiveM
+        window.addEventListener('message', function(event) {
+            const data = event.data;
+            
+            switch(data.type) {
+                case 'openInsurance':
+                    openInsuranceMenu(data.vehicle, data.insurance);
+                    break;
+                case 'closeInsurance':
+                    closeInsuranceMenu();
+                    break;
+            }
+        });
+
+        function openInsuranceMenu(vehicleData, insuranceData) {
+            currentVehicleData = vehicleData;
+            currentInsuranceData = insuranceData;
+            
+            document.body.style.display = 'block';
+            
+            // Aggiorna informazioni veicolo
+            document.getElementById('vehiclePlate').textContent = vehicleData.plate;
+            document.getElementById('vehicleModel').textContent = vehicleData.model;
+            
+            updateInsuranceStatus(insuranceData);
+            updateButtons(insuranceData);
+        }
+
+        function closeInsuranceMenu() {
+            document.body.style.display = 'none';
+            resetSelection();
+        }
+
+        function updateInsuranceStatus(insuranceData) {
+            const statusElement = document.getElementById('insuranceStatus');
+            const claimsInfo = document.getElementById('claimsInfo');
+            
+            if (insuranceData.active) {
+                if (insuranceData.expired) {
+                    statusElement.className = 'insurance-status status-expired';
+                    statusElement.innerHTML = '⚠️ Assicurazione Scaduta';
+                } else {
+                    statusElement.className = 'insurance-status status-active';
+                    statusElement.innerHTML = '✅ Assicurazione Attiva';
+                    
+                    // Mostra informazioni claims
+                    claimsInfo.classList.remove('hidden');
+                    const insuranceConfig = insuranceTypes[insuranceData.type];
+                    const maxClaims = insuranceConfig ? insuranceConfig.maxClaims : 0;
+                    document.getElementById('claimsUsed').textContent = 
+                        `${insuranceData.claims_used || 0}/${maxClaims === 999 ? '∞' : maxClaims}`;
+                    
+                    // Mostra data scadenza
+                    if (insuranceData.expires_at) {
+                        const expiryDate = new Date(parseInt(insuranceData.expires_at) * 1000);
+                        document.getElementById('expiryDate').textContent = 
+                            expiryDate.toLocaleDateString('it-IT') + ' ' + expiryDate.toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'});
+                    }
+                }
+            } else {
+                statusElement.className = 'insurance-status status-inactive';
+                statusElement.innerHTML = '❌ Nessuna Assicurazione Attiva';
+                claimsInfo.classList.add('hidden');
+            }
+        }
+
+        function updateButtons(insuranceData) {
+            const buyBtn = document.getElementById('buyBtn');
+            const renewBtn = document.getElementById('renewBtn');
+            const claimBtn = document.getElementById('claimBtn');
+            const buySection = document.getElementById('buySection');
+
+            // Reset visibility
+            buyBtn.classList.add('hidden');
+            renewBtn.classList.add('hidden');
+            claimBtn.classList.add('hidden');
+
+            if (!insuranceData.active || insuranceData.expired) {
+                // Mostra opzioni di acquisto/rinnovo
+                buySection.style.display = 'block';
+                
+                if (insuranceData.expired) {
+                    renewBtn.classList.remove('hidden');
+                } else {
+                    buyBtn.classList.remove('hidden');
+                }
+            } else {
+                // Assicurazione attiva - nascondi sezione acquisto e mostra claim
+                buySection.style.display = 'none';
+                claimBtn.classList.remove('hidden');
+                renewBtn.classList.remove('hidden');
+            }
+        }
+
+        function selectInsurance(type) {
+            // Rimuovi selezione precedente
+            document.querySelectorAll('.insurance-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Seleziona nuovo tipo
+            const selectedCard = document.querySelector(`[data-type="${type}"]`);
+            selectedCard.classList.add('selected');
+            
+            selectedInsuranceType = type;
+            updateTotalCost();
+        }
+
+        function selectDuration(days) {
+            // Rimuovi selezione precedente
+            document.querySelectorAll('.duration-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Seleziona nuova durata
+            const selectedOption = document.querySelector(`[data-days="${days}"]`);
+            selectedOption.classList.add('selected');
+            
+            selectedDuration = days;
+            updateTotalCost();
+        }
+
+        function updateTotalCost() {
+            if (selectedInsuranceType) {
+                const insurance = insuranceTypes[selectedInsuranceType];
+                const totalCost = insurance.price * selectedDuration;
+                
+                document.getElementById('totalCost').classList.remove('hidden');
+                document.getElementById('totalCost').textContent = `Costo Totale: ${totalCost.toLocaleString()}`;
+                
+                document.getElementById('buyBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('totalCost').classList.add('hidden');
+                document.getElementById('buyBtn').classList.add('hidden');
+            }
+        }
+
+        function buyInsurance() {
+            if (!selectedInsuranceType) {
+                alert('Seleziona un tipo di assicurazione!');
+                return;
+            }
+
+            const data = {
+                type: selectedInsuranceType,
+                duration: selectedDuration
+            };
+
+            // Invia richiesta a FiveM
+            fetch(`https://${GetParentResourceName()}/buyInsurance`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+        }
+
+        function renewInsurance() {
+            const data = {
+                duration: selectedDuration
+            };
+
+            fetch(`https://${GetParentResourceName()}/renewInsurance`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+        }
+
+        function claimInsurance() {
+            if (confirm('Sei sicuro di voler richiedere un sinistro? Questo utilizzerà uno dei tuoi sinistri disponibili.')) {
+                fetch(`https://${GetParentResourceName()}/claimInsurance`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({})
+                });
+            }
+        }
+
+        function closeMenu() {
+            fetch(`https://${GetParentResourceName()}/closeMenu`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+        }
+
+        function resetSelection() {
+            selectedInsuranceType = null;
+            selectedDuration = 30;
+            
+            document.querySelectorAll('.insurance-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.duration-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            document.querySelector('[data-days="30"]').classList.add('selected');
+            document.getElementById('totalCost').classList.add('hidden');
+        }
+
+        // Chiudi menu con ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeMenu();
+            }
+        });
+
+        // Funzione per ottenere il nome della risorsa (necessaria per FiveM)
+        function GetParentResourceName() {
+            return window.location.hostname === 'nui-localhost' ? 'auto_insurance' : window.location.hostname;
+        }
+    </script>
+</body>
+</html>
