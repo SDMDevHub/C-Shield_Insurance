@@ -5,6 +5,7 @@
 -- CLIENT SIDE (client.lua)
 -- ================================
 
+local fines = {}
 ESX = nil
 local PlayerData = {}
 local isInsuranceMenuOpen = false
@@ -121,6 +122,52 @@ RegisterNUICallback('renewInsurance', function(data, cb)
     cb('ok')
 end)
 
+RegisterNetEvent('fines:receiveFine')
+AddEventHandler('fines:receiveFine', function(data)
+    table.insert(fines, data)
+    ESX.ShowNotification('~r~Hai ricevuto una multa:~s~ ' .. data.reason .. ' | Importo: $' .. data.amount)
+end)
+
+-- Comando per vedere le proprie multe
+RegisterCommand('multe', function()
+    if #fines == 0 then
+        ESX.ShowNotification('~g~Non hai multe attive!')
+    else
+        for i, fine in ipairs(fines) do
+            ESX.ShowNotification(('~y~[MULTE]~s~ #%d | %s | $%d'):format(i, fine.reason, fine.amount))
+        end
+        ESX.ShowNotification('Usa /pagamulta [ID] per pagare una multa.')
+    end
+end)
+
+-- Comando per pagare una multa
+RegisterCommand('pagamulta', function(source, args)
+    local fineID = tonumber(args[1])
+    if fineID and fines[fineID] then
+        -- Invia richiesta di pagamento al server
+        TriggerServerEvent('fines:payFine', fines[fineID])
+    else
+        ESX.ShowNotification('~r~ID multa non valido!')
+    end
+end)
+
+-- Evento: multa pagata, rimuovila localmente
+RegisterNetEvent('fines:finePaid')
+AddEventHandler('fines:finePaid', function(fine)
+    for i, v in ipairs(fines) do
+        if v.id == fine.id then
+            table.remove(fines, i)
+            ESX.ShowNotification('~g~Hai pagato la multa per:~s~ ' .. fine.reason)
+            return
+        end
+    end
+end)
+
+-- Ricevi tutte le multe all'accesso
+RegisterNetEvent('fines:setFines')
+AddEventHandler('fines:setFines', function(serverFines)
+    fines = serverFines or {}
+end)
 -- ================================
 -- SERVER SIDE (server.lua)
 -- ================================
