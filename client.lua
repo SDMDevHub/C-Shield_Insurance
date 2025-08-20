@@ -151,9 +151,10 @@ local InsuranceConfig = {
         }
     },
     repair_costs = {
-        low = 500,    -- Danni lievi
-        medium = 1500, -- Danni medi
-        high = 3000   -- Danni gravi
+        low = 500,    -- Minor damage
+        medium = 1500, -- Average damage
+        high = 3000,  -- Serious damage
+        extreme = 4500 -- Damage Extreme
     }
 }
 
